@@ -1,0 +1,25 @@
+# 依赖
+node_modules/
+
+# 运行时数据（个人听力材料，绝不要提交）
+data.json
+data.json.tmp
+
+# 环境变量与密钥
+.env
+.env.local
+.env.*.local
+
+# 补丁备份
+*.bak-*
+
+# 日志与系统文件
+npm-debug.log*
+yarn-error.log*
+*.log
+.DS_Store
+Thumbs.db
+
+# 编辑器
+.vscode/
+.idea/

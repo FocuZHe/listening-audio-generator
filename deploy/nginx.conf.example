@@ -1,0 +1,25 @@
+# 反代示例：把站点挂在 http://your-domain/ 根路径
+#
+# 注意：前端资源使用绝对路径（/assets/...），所以必须部署在域名或端口的根路径下，
+# 不要挂到子目录（如 /listening/），否则 JS/CSS 会 404。
+
+server {
+    listen 80;
+    server_name your-domain.example.com;
+
+    # 前端会把整卷题目 JSON POST 到 /api/data，留足体积
+    client_max_body_size 16m;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # 语音合成是逐条请求微软服务，慢的时候几十秒，别让反代先超时
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+    }
+}

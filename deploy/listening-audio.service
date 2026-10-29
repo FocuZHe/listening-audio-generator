@@ -1,0 +1,15 @@
+[Unit]
+Description=Listening Audio Generator (English exam listening audio)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/listening-audio
+ExecStart=/usr/bin/node /opt/listening-audio/server.cjs
+Restart=always
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=PORT=3000
+
+[Install]
+WantedBy=multi-user.target

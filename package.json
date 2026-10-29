@@ -1,0 +1,33 @@
+{
+  "name": "listening-audio-generator",
+  "version": "1.0.0",
+  "description": "英语听力试卷音频生成器 —— 基于微软 Edge Neural TTS，逐题合成并拼接成整卷连续音频",
+  "main": "server.cjs",
+  "type": "commonjs",
+  "scripts": {
+    "start": "NODE_ENV=production node server.cjs",
+    "dev": "node server.cjs",
+    "postinstall": "node scripts/repatch-edge-tts-v2.cjs --no-verify",
+    "patch:tts": "node scripts/repatch-edge-tts-v2.cjs",
+    "check:tts": "node scripts/repatch-edge-tts-v2.cjs --check"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^4.22.2",
+    "node-edge-tts": "1.2.10",
+    "vite": "^6.4.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "edge-tts",
+    "tts",
+    "listening",
+    "english",
+    "exam",
+    "wav",
+    "education"
+  ],
+  "license": "MIT"
+}
