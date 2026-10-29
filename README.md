@@ -1,164 +1,156 @@
-# 听力音频生成器 · Listening Audio Generator
+# 听力音频生成器
 
-给英语试卷做听力音频的小工具：把题目按「归档 → 分卷 → 题」录进去，选好音色、语速、停顿和铃声，一键把**整卷**合成为一条连续的 WAV 音频，直接拿去放给学生听。
+给英语试卷做听力音频。把题目录进去，点一次，就能得到一整条连续的 WAV，直接放给学生听。
 
-后端 Node.js（Express），语音合成走微软 Edge 的在线 Neural TTS（免费、无需 API Key），前端是 Vite 打包的单页应用。
+语音用的是微软 Edge 在线朗读，免费，不需要 API Key。电脑需要能上网。
 
-> 适合中小学英语老师出单元卷、期中期末卷的听力部分。
+适合中小学英语老师做单元卷、期中期末卷的听力部分。
 
----
+## 先装好这个
 
-## 功能
+只需要 [Node.js 18](https://nodejs.org/) 或更高版本。安装时请勾选 **Add to PATH**。
 
-- **结构化录题**：归档（整套教材/学期）→ 分卷（大题，如「一、听录音选出单词」）→ 题目
-  - `statement` 单句题：读一句，可重复 N 遍
-  - `dialogue` 对话题：男女声交替朗读
-- **每题自定义**：导入语（如 `Number 1.`）、重复遍数、句后停顿、对话后停顿、题后停顿
-- **卷首/卷尾**：可设置开考提示语（`examHeader`）和结束语（`examFooter`）
-- **提示铃声**：可开关
-- **音色**：微软 Edge Neural TTS，中/英/日/韩/多语种上百个音色（见 `voice_map.json`），男女声分开配置
-- **整卷导出**：前端逐题取音频 → 解码 → 按停顿拼接 → 输出单个连续 WAV
-- **数据双保险**：浏览器 `localStorage` 为主，同时同步一份到服务器 `data.json`
+装好后，在命令行输入 `node -v`，能看到版本号就可以继续。
 
----
+## 最快的用法
 
-## 快速开始
+1. 下载或克隆这个文件夹，放到任意位置。整个文件夹都可以拷走，换一台装了 Node.js 的电脑也能用。
+2. Windows：双击 **`一键启动.bat`**。  
+   macOS / Linux：在这个文件夹里执行 `bash 一键启动.sh`。
+3. 第一次会自动安装依赖，需要联网，等它跑完。以后再打开就直接启动。
+4. 浏览器会自己打开 <http://localhost:3000> 。如果没有打开，就手动输入这个地址。
+5. 用完后关掉黑色命令行窗口，服务就停了。
 
-需要 **Node.js ≥ 18**（开发环境为 v22）。
+默认音色已经设好，一般不用改：
+
+- 男声：Microsoft WilliamMultilingual Online (Natural)
+- 女声：Microsoft Natasha Online (Natural) - English (Australia)
+- 旁白 / 中文：Microsoft Xiaoxiao Online (Natural) - Chinese (Mainland)
+
+## 页面上怎么出一套听力
+
+按这个顺序做即可。
+
+1. **选一份材料。** 左上角默认是「听力材料」。要另做一套卷子，点「新建听力材料」，起个名字，比如「五年级上册期中」。
+2. **加大题。** 点「立即新建大题」或「添加新听力大题部分」。点铅笔图标，填写大题标题和指导语，再点保存。不保存的话，播放时不会念这个标题。
+3. **加小题。**
+   - 「增加单句题」：同一句先由男声读一遍，停一下，再由女声读一遍。
+   - 「增加对话题」：按每句旁边的男声 / 女声读完一遍，停一下，再把整段对话读第二遍。
+   - 题号前面的引导语默认是 `Number 1.`，可以改成别的，留空就不念。
+   - 单句和对话可以来回切换。切换时只保留你已经写的文字，不会自动塞进示例句子。空白台词会被跳过，不会读出来。
+4. **写开场白和结束语。** 在「试卷听力广播语」里填写。结束语默认是「听力部分到此结束，请接着完成笔试部分。」留空就不会念。
+5. **试听。** 每道题左边的播放按钮只听这一题。上方「播放完整考试录音」会从开场白一直念到结束语。点左侧大纲只是跳到那一道大题，不会改成从中间开始播。
+6. **导出。** 点「导出整卷高清晰音频」。浏览器会下载一个 WAV，文件名就是当前材料的名字。这一步会逐句向微软请求语音，题目多时要等一会儿，不要关窗口。
+
+右侧可以调节：
+
+- **语速**：默认 0.9 倍。点「0.85x」会切到五年级常用速度。
+- **停顿**：男女声之间、对话句子之间、每题答完后的留白。可以直接输入小数，例如 `1.5`。
+- **叮咚**：每题开始前是否先响一声。
+
+## 做好的卷子存在哪里
+
+题目主要保存在这台电脑的浏览器里，同时会在项目文件夹生成 `data.json` 作为备份。
+
+- 换浏览器，或清空了浏览器数据，可能看不到原来的卷子。`data.json` 还在的话，用同一个地址打开通常能再同步回来。
+- `data.json` 是你自己的试卷，不要发给别人，也不要上传到网上。
+- 朗读内容会发给微软的公开朗读服务，不要用来读敏感内容。
+
+## 遇到问题
+
+**双击后提示没有 Node.js**  
+去 <https://nodejs.org/> 安装 18 或更高版本，重开一次命令行，再双击 `一键启动.bat`。
+
+**页面打不开**  
+看黑色窗口是否还开着。地址是 <http://localhost:3000> 。如果 3000 端口被占用，可以换一个端口后再启动：
+
+```bat
+set PORT=3080
+一键启动.bat
+```
+
+PowerShell：
+
+```powershell
+$env:PORT = "3080"
+.\一键启动.bat
+```
+
+macOS / Linux：`PORT=3080 bash 一键启动.sh`
+
+**能打开页面，但试听或导出失败**  
+先确认电脑能上网。微软有时会更新朗读接口，导致安装好的组件失效。在项目文件夹里执行：
 
 ```bash
-git clone https://github.com/FocuZHe/listening-audio-generator.git
-cd listening-audio-generator
-npm install          # 会自动给 node-edge-tts 打上 Edge TTS v2 补丁
-npm start            # Windows / macOS / Linux 均可，默认生产模式，端口 3000
+npm run check:tts
+npm run patch:tts
 ```
 
-然后打开 <http://localhost:3000> 。换端口时设置环境变量再启动，例如 `PORT=3080 npm start`（PowerShell：`$env:PORT=3080; npm start`）。
+第一条是检查，第二条会重新打补丁，并真的合成一句中文来确认。然后再双击启动。
 
-首次启动会自动生成空的 `data.json`，浏览器打开即用。
+**导出很慢**  
+正常。每一句都要单独合成，再拼成一条音频。
 
-界面默认音色保持为：男声 `Microsoft WilliamMultilingual Online (Natural)`、女声 `Microsoft Natasha Online (Natural) - English (Australia)`、旁白 `Microsoft Xiaoxiao Online (Natural) - Chinese (Mainland)`。
+## 不想双击脚本时
 
----
-
-## 目录结构
-
-```
-listening-audio-generator/
-├── server.cjs                  # 服务入口（Express，含 /api/* 与静态托管）
-├── dist/                       # 前端构建产物（Vite 打包，直接由 Express 托管）
-│   ├── index.html
-│   └── assets/index-*.js|css
-├── voice_map.json              # 「浏览器音色名 → Edge Neural 音色 ID」映射表
-├── scripts/
-│   ├── start.cjs               # 跨平台启动：未设置 NODE_ENV 时使用 production
-│   ├── repatch-edge-tts-v2.cjs # Edge TTS 403 幂等修复脚本（见下方说明）
-│   └── edge-tts-v2/drm.js      # Sec-MS-GEC v2 令牌实现
-├── deploy/
-│   ├── listening-audio.service # systemd 示例
-│   └── nginx.conf.example      # nginx 反代示例
-├── package.json
-└── LICENSE
-```
-
----
-
-## HTTP 接口
-
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| GET | `/api/health` | 健康检查，返回 `{status:"ok", time}` |
-| GET | `/api/voices` | 返回全部音色映射，以及按语言分组的列表 |
-| GET | `/api/data` | 读取服务器端数据（`archives` / `config` / `current_archive_id`） |
-| POST | `/api/data` | 覆盖写入上述三个字段（只传要改的字段，其余保留） |
-| POST | `/api/tts` | 合成单条语音，body：`{text, voiceName, role, speed}`，返回 `{audio: <base64 MP3>}` |
-
-`role` 可取 `male` / `female` / `narrator`；`speed` 为语速倍率（如 `0.9`）。
-`voiceName` 传 `voice_map.json` 里的**中文描述名**（例如 `Microsoft Natasha Online (Natural) - English (Australia)`），服务端据此解析出真正的 Neural 音色 ID。
-
----
-
-## 音色配置
-
-`voice_map.json` 是一张扁平的映射表，键是界面上显示的浏览器音色名，值是 Edge TTS 的音色 ID：
-
-```json
-{
-  "Microsoft WilliamMultilingual Online (Natural)": "en-AU-WilliamMultilingualNeural",
-  "Microsoft Natasha Online (Natural) - English (Australia)": "en-AU-NatashaNeural",
-  "Microsoft Xiaoxiao Online (Natural) - Chinese (Mainland)": "zh-CN-XiaoxiaoNeural"
-}
-```
-
-想加音色：把 `"界面显示名": "xx-XX-XxxNeural"` 追加进去，重启服务即可。音色 ID 可在
-`edge-tts --list-voices` 或微软 [Speech 音色列表](https://learn.microsoft.com/azure/ai-services/speech-service/language-support) 里查。
-
----
-
-## ⚠️ Edge TTS 403：为什么装完还要打补丁
-
-微软 2025 年起把 Edge Read-Aloud 的鉴权参数 `Sec-MS-GEC` 升级到了 **v2**：
-
-- v1（旧）：`SHA256(roundedTicks + TRUSTED_CLIENT_TOKEN)`
-- v2（新）：`<CS64 校验和16hex>-<SHA256 64hex>`，哈希输入前面多一行版权串，并要求
-  `Sec-MS-GEC-Version=2-<chromium 版本>` 和 `ConnectionId`
-
-而 npm 上的 `node-edge-tts@1.2.10 / 1.2.11` 仍在用 v1 → WebSocket 握手直接 **403**。
-症状很有迷惑性：**页面能开、资源能加载、就是点「生成」永远失败**。
-
-本仓库的处理方式：
+在项目文件夹里：
 
 ```bash
-npm install                       # postinstall 自动执行 --no-verify 打补丁
-npm run check:tts                 # 体检：0=补丁完整，1=需要修
-npm run patch:tts                 # 手动补丁 + 联网合成自检（会真合成一句中文验证）
+npm install
+npm start
 ```
 
-脚本是**幂等**的，只改 `node_modules/node-edge-tts/dist/{drm.js,edge-tts.js}`，
-原文件留 `*.bak-<时间戳>` 备份，不碰任何业务代码和用户数据。
+然后打开 <http://localhost:3000> 。Windows、macOS、Linux 都是这两条命令。
 
-> 注意：**每次 `npm install` / `npm ci` 都会把补丁冲掉**（所以有 postinstall 兜底）。
-> 如果某天又出现 403，先跑 `npm run check:tts`，再跑 `npm run patch:tts`。
-> 若微软再次改协议，只需要更新 `scripts/edge-tts-v2/drm.js`。
+## 文件夹里有什么
 
----
+```
+一键启动.bat                 Windows 双击：安装依赖并启动
+一键启动.sh                  macOS / Linux：安装依赖并启动
+scripts/setup-and-run.cjs    上面两个脚本实际调用的程序
+scripts/start.cjs            只启动服务，不重复安装
+server.cjs                   网页和语音接口
+dist/                        已经打包好的页面
+voice_map.json               音色名称和 Edge 音色编号的对照表
+data.json                    运行后自动出现，保存你的试卷，不进仓库
+```
 
-## 部署到服务器
+想增加音色时，在 `voice_map.json` 里加一行 `"页面上显示的名字": "xx-XX-XxxNeural"`，保存后重启服务。音色编号可以在微软的 [语音列表](https://learn.microsoft.com/azure/ai-services/speech-service/language-support) 里查。
+
+## 放到学校服务器上
+
+适合已经会用 Linux 的人。把文件夹拷到服务器后：
 
 ```bash
-sudo mkdir -p /opt/listening-audio
-sudo cp -r ./* /opt/listening-audio/      # 或直接在该目录 npm install
-cd /opt/listening-audio && sudo npm install --omit=dev
+cd /opt/listening-audio
+npm install --omit=dev
 sudo cp deploy/listening-audio.service /etc/systemd/system/
-sudo systemctl daemon-reload && sudo systemctl enable --now listening-audio
+sudo systemctl daemon-reload
+sudo systemctl enable --now listening-audio
 ```
 
-nginx 反代示例见 `deploy/nginx.conf.example`（**必须挂在根路径**，前端资源用的是绝对路径 `/assets/...`，
-挂到子目录会 404）。语音合成是逐条请求微软服务，反代超时记得放宽到 300s。
+服务文件里已经写了生产模式和 3000 端口。前面再加一层网站反代时，用 `deploy/nginx.conf.example`。网站必须挂在域名根路径上，例如 `https://school.example.com/`，不要挂到 `/listening/` 这样的子目录，否则页面样式和脚本会找不到。
 
----
+反代超时建议放到 300 秒，因为导出整卷时单次请求可能比较久。
 
-## 数据与隐私
+## 给开发者的接口
 
-- 听力材料**不在仓库里**：`data.json` 已被 `.gitignore` 排除，它只存在于你自己的部署机器上
-- 界面的主要数据源是浏览器 `localStorage`，服务器 `data.json` 是同步备份
-- `.env`、`.env.local` 同样被忽略；本项目默认不需要任何 API Key
-- 语音合成内容会发往微软 Edge 的公开朗读接口，不要用它处理敏感内容
+| 方法 | 路径 | 作用 |
+| --- | --- | --- |
+| GET | `/api/health` | 服务是否还活着 |
+| GET | `/api/voices` | 全部音色 |
+| GET | `/api/data` | 读取已保存的试卷和设置 |
+| POST | `/api/data` | 保存试卷或设置。只传要改的字段，其余保留 |
+| POST | `/api/tts` | 合成一句。内容为 `{text, voiceName, role, speed}`，返回 `{audio: base64 的 MP3}` |
 
----
+`role` 用 `male`、`female` 或 `narrator`。`speed` 是倍数，例如 `0.9`。`voiceName` 用 `voice_map.json` 里的显示名。
 
-## 已知限制
+页面文件在 `dist/` 里，是打包结果，这个仓库没有前端源码。`server.cjs` 可以直接改。
 
-- **前端只提供构建产物**：`dist/` 是 Vite 打包后的文件，前端源码不在本仓库内，因此前端无法在此仓库直接二次开发（后端 `server.cjs` 是可读的 Node CJS，可直接改）。
-- **`server.cjs` 是打包后的运行文件**，同样不是原始 TS 工程。
-- **依赖微软在线服务**：断网无法合成；微软改协议时需重打补丁。
-- 旧数据里可能还有 `engine: "gemini"` 字段，服务端没有 Gemini 接口，试听和导出都走 Edge TTS，不需要 API Key。
-- 默认端口 `3000`。要用别的端口，设置环境变量 `PORT`，或在外层反代。
+旧的配置里可能还有一项叫 `gemini` 的引擎。现在没有这个接口，试听和导出都走 Edge，不需要填写 API Key。
 
----
-
-## License
+## 许可
 
 [MIT](LICENSE)
 
-本项目只是调用微软公开的 Edge 朗读接口，与 Microsoft 无关；请自行遵守其服务条款，勿用于商业转售语音服务。
+本工具只是调用微软公开的 Edge 朗读接口，与 Microsoft 无关。请遵守对方的服务条款，不要把语音服务拿去转售。
