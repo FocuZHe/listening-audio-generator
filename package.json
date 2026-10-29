@@ -5,7 +5,7 @@
   "main": "server.cjs",
   "type": "commonjs",
   "scripts": {
-    "start": "NODE_ENV=production node server.cjs",
+    "start": "node scripts/start.cjs",
     "dev": "node server.cjs",
     "postinstall": "node scripts/repatch-edge-tts-v2.cjs --no-verify",
     "patch:tts": "node scripts/repatch-edge-tts-v2.cjs",
@@ -29,5 +29,13 @@
     "wav",
     "education"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FocuZHe/listening-audio-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FocuZHe/listening-audio-generator/issues"
+  },
+  "homepage": "https://github.com/FocuZHe/listening-audio-generator#readme"
 }

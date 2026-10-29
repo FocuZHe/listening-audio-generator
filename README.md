@@ -27,22 +27,17 @@
 需要 **Node.js ≥ 18**（开发环境为 v22）。
 
 ```bash
-git clone https://github.com/<your-name>/listening-audio-generator.git
+git clone https://github.com/FocuZHe/listening-audio-generator.git
 cd listening-audio-generator
 npm install          # 会自动给 node-edge-tts 打上 Edge TTS v2 补丁
-npm start            # = NODE_ENV=production node server.cjs
+npm start            # Windows / macOS / Linux 均可，默认生产模式，端口 3000
 ```
 
-然后打开 <http://localhost:3000> 。
-
-Windows（cmd / PowerShell）：
-
-```bat
-npm install
-set NODE_ENV=production && node server.cjs
-```
+然后打开 <http://localhost:3000> 。换端口时设置环境变量再启动，例如 `PORT=3080 npm start`（PowerShell：`$env:PORT=3080; npm start`）。
 
 首次启动会自动生成空的 `data.json`，浏览器打开即用。
+
+界面默认音色保持为：男声 `Microsoft WilliamMultilingual Online (Natural)`、女声 `Microsoft Natasha Online (Natural) - English (Australia)`、旁白 `Microsoft Xiaoxiao Online (Natural) - Chinese (Mainland)`。
 
 ---
 
@@ -56,6 +51,7 @@ listening-audio-generator/
 │   └── assets/index-*.js|css
 ├── voice_map.json              # 「浏览器音色名 → Edge Neural 音色 ID」映射表
 ├── scripts/
+│   ├── start.cjs               # 跨平台启动：未设置 NODE_ENV 时使用 production
 │   ├── repatch-edge-tts-v2.cjs # Edge TTS 403 幂等修复脚本（见下方说明）
 │   └── edge-tts-v2/drm.js      # Sec-MS-GEC v2 令牌实现
 ├── deploy/
@@ -156,8 +152,8 @@ nginx 反代示例见 `deploy/nginx.conf.example`（**必须挂在根路径**，
 - **前端只提供构建产物**：`dist/` 是 Vite 打包后的文件，前端源码不在本仓库内，因此前端无法在此仓库直接二次开发（后端 `server.cjs` 是可读的 Node CJS，可直接改）。
 - **`server.cjs` 是打包后的运行文件**，同样不是原始 TS 工程。
 - **依赖微软在线服务**：断网无法合成；微软改协议时需重打补丁。
-- 界面里的 `gemini` 引擎配置项是早期版本遗留，当前服务端未实现，实际生效的一直是 Edge TTS。
-- 端口写死 `3000`（`server.cjs` 里的 `const PORT`），要换端口改这一行或在外层反代。
+- 旧数据里可能还有 `engine: "gemini"` 字段，服务端没有 Gemini 接口，试听和导出都走 Edge TTS，不需要 API Key。
+- 默认端口 `3000`。要用别的端口，设置环境变量 `PORT`，或在外层反代。
 
 ---
 

@@ -32,7 +32,7 @@ var import_node_edge_tts = require("node-edge-tts");
 import_dotenv.default.config();
 async function startServer() {
   const app = (0, import_express.default)();
-  const PORT = 3e3;
+  const PORT = Number(process.env.PORT) || 3e3;
   app.use(import_express.default.json({ limit: "10mb" }));
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", time: (/* @__PURE__ */ new Date()).toISOString() });
