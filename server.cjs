@@ -24,12 +24,30 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 // server.ts
 var import_express = __toESM(require("express"), 1);
 var import_path = __toESM(require("path"), 1);
-var import_vite = require("vite");
 var import_dotenv = __toESM(require("dotenv"), 1);
 var import_fs = __toESM(require("fs"), 1);
 var import_os = __toESM(require("os"), 1);
 var import_node_edge_tts = require("node-edge-tts");
 import_dotenv.default.config();
+function appRootDir() {
+  try {
+    if (require("node:sea").isSea()) return import_path.default.dirname(process.execPath);
+  } catch (e) {
+  }
+  return process.cwd();
+}
+function loadVoiceMap() {
+  const voiceMapPath = import_path.default.join(appRootDir(), "voice_map.json");
+  try {
+    if (import_fs.default.existsSync(voiceMapPath)) {
+      return JSON.parse(import_fs.default.readFileSync(voiceMapPath, "utf-8"));
+    }
+  } catch (e) {
+  }
+  const embedded = global.LISTENING_EMBEDDED_ASSETS;
+  if (embedded && embedded.voiceMap) return embedded.voiceMap;
+  throw new Error("找不到 voice_map.json");
+}
 async function startServer() {
   const app = (0, import_express.default)();
   const PORT = Number(process.env.PORT) || 3e3;
@@ -39,8 +57,7 @@ async function startServer() {
   });
   app.get("/api/voices", (req, res) => {
     try {
-      const voiceMapPath = import_path.default.join(process.cwd(), "voice_map.json");
-      const data = JSON.parse(import_fs.default.readFileSync(voiceMapPath, "utf-8"));
+      const data = loadVoiceMap();
       const groups = {};
       for (const [name, id] of Object.entries(data)) {
         const lang = id.split("-").slice(0, 2).join("-");
@@ -52,7 +69,7 @@ async function startServer() {
       res.status(500).json({ error: "voice_map_load_failed", message: err.message });
     }
   });
-  const dataFilePath = import_path.default.join(process.cwd(), "data.json");
+  const dataFilePath = import_path.default.join(appRootDir(), "data.json");
   const ensureDataFile = () => {
     if (!import_fs.default.existsSync(dataFilePath)) {
       import_fs.default.writeFileSync(dataFilePath, JSON.stringify({ archives: [], config: null, current_archive_id: null }, null, 2));
@@ -98,10 +115,9 @@ async function startServer() {
       let voice = "en-US-JennyNeural";
       let lang = "en-US";
       const hasChinese = /[\u4e00-\u9fa5]/.test(text);
-      const voiceMapPath = import_path.default.join(process.cwd(), "voice_map.json");
       let voiceMap = {};
       try {
-        voiceMap = JSON.parse(import_fs.default.readFileSync(voiceMapPath, "utf-8"));
+        voiceMap = loadVoiceMap();
       } catch (e) {
       }
       if (voiceName && voiceMap[voiceName]) {
@@ -249,21 +265,48 @@ async function startServer() {
     }
   });
   if (process.env.NODE_ENV !== "production") {
-    const vite = await (0, import_vite.createServer)({
+    const vite = await require("vite").createServer({
       server: { middlewareMode: true },
       appType: "spa"
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = import_path.default.join(process.cwd(), "dist");
-    app.use(import_express.default.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(import_path.default.join(distPath, "index.html"));
-    });
+    const embedded = global.LISTENING_EMBEDDED_ASSETS;
+    if (embedded && embedded.files) {
+      app.use((req, res, next) => {
+        const file = embedded.files[req.path];
+        if (!file) return next();
+        res.type(file.type).send(file.body);
+      });
+      app.get("*", (req, res) => {
+        const home = embedded.files["/index.html"];
+        if (!home) return res.status(404).end();
+        res.type("html").send(home.body);
+      });
+    } else {
+      const distPath = import_path.default.join(appRootDir(), "dist");
+      app.use(import_express.default.static(distPath));
+      app.get("*", (req, res) => {
+        res.sendFile(import_path.default.join(distPath, "index.html"));
+      });
+    }
   }
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`[Server] Listening on http://localhost:${PORT} in ${process.env.NODE_ENV || "development"} mode`);
+    try {
+      if (require("node:sea").isSea()) openBrowser(`http://localhost:${PORT}`);
+    } catch (e) {
+    }
   });
+}
+function openBrowser(url) {
+  const { spawn } = require("child_process");
+  if (process.platform === "win32") {
+    spawn("cmd", ["/c", "start", "", url], { detached: true, stdio: "ignore" }).unref();
+    return;
+  }
+  const command = process.platform === "darwin" ? "open" : "xdg-open";
+  spawn(command, [url], { detached: true, stdio: "ignore" }).unref();
 }
 startServer().catch((err) => {
   console.error("[Server Crash]:", err);

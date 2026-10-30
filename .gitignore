@@ -23,3 +23,7 @@ Thumbs.db
 # 编辑器
 .vscode/
 .idea/
+
+# exe 打包中间文件和成品（成品放到 GitHub Release，不进仓库）
+build/
+release/
