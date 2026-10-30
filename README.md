@@ -34,18 +34,27 @@
 
 ## 部署到服务器
 
-个人在 Windows 上使用，直接下载上面的 exe。这一节是给要把网页放到服务器、让别人远程打开的人。
+这一节是给管理员的。程序装在一台服务器上，老师和学生用自己的电脑打开网页。Windows 7、Windows 8、Windows 10、Windows 11、Mac 和手机都可以，只要浏览器能打开那个地址。语音合成在服务器上完成，所以服务器必须能访问微软。
 
-服务器需要 [Node.js 18](https://nodejs.org/) 或更高版本。
+服务器用 Linux，需要 [Node.js 18](https://nodejs.org/) 或更高版本。
 
 ```bash
-npm install
-npm start
+sudo mkdir -p /opt/listening-audio
+sudo cp -r . /opt/listening-audio
+cd /opt/listening-audio
+sudo npm install --omit=dev
+sudo cp deploy/listening-audio.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now listening-audio
 ```
 
-默认地址是 <http://localhost:3000> 。换端口可以设置环境变量 `PORT`。前面加网站反代时，用 `deploy/nginx.conf.example`，站点必须挂在域名根路径，超时建议 300 秒。Linux 开机自启可以用 `deploy/listening-audio.service`。
+服务只在服务器本机的 3000 端口接收请求。别人不要打开 `localhost`。同一局域网里的人打开 `http://服务器IP:3000`。
 
-试听失败时先确认服务器能访问微软。如果是朗读接口更新导致的，再执行 `npm run check:tts`，然后 `npm run patch:tts`。
+放到公网时，用 Nginx 把域名指到这个端口，示例是 `deploy/nginx.conf.example`。站点必须在域名根路径，例如 `https://listening.school.edu/`，不要挂到 `/listening/` 下面。反代超时设为 300 秒，整卷导出时单次请求会比较久。配好之后，别人打开的是这个域名，不是 3000 端口。
+
+试卷保存在服务器上的 `/opt/listening-audio/data.json`。换端口时修改 service 文件里的 `PORT`，然后 `sudo systemctl restart listening-audio`。
+
+试听失败时，先在服务器上确认能访问微软。如果是朗读接口更新导致的，在 `/opt/listening-audio` 里执行 `sudo npm run check:tts`，再执行 `sudo npm run patch:tts`，然后重启服务。
 
 ## 许可
 
