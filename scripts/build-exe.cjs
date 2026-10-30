@@ -81,7 +81,23 @@ function injectExe() {
     "--sentinel-fuse",
     "NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2"
   ]);
+  setIcon(exePath, path.join(root, "icons", "browser.ico"));
   return exePath;
+}
+
+function setIcon(exePath, icoPath) {
+  const ResEdit = require("resedit");
+  const exe = ResEdit.NtExecutable.from(fs.readFileSync(exePath), { ignoreCert: true });
+  const res = ResEdit.NtExecutableResource.from(exe);
+  const iconFile = ResEdit.Data.IconFile.from(fs.readFileSync(icoPath));
+  ResEdit.Resource.IconGroupEntry.replaceIconsForResource(
+    res.entries,
+    1,
+    1033,
+    iconFile.icons.map((item) => item.data)
+  );
+  res.outputResource(exe);
+  fs.writeFileSync(exePath, Buffer.from(exe.generate()));
 }
 
 writeEmbeddedAssets();

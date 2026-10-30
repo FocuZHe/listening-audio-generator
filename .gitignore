@@ -27,3 +27,9 @@ Thumbs.db
 # exe 打包中间文件和成品（成品放到 GitHub Release，不进仓库）
 build/
 release/
+desktop/bin/
+desktop/obj/
+desktop-webview/bin/
+desktop-webview/obj/
+icons/bin/
+icons/obj/

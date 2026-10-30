@@ -8,12 +8,19 @@
 
 ## 下载
 
-发布页里有两个文件，请按自己的需要**单独下载**。不要把它们再打进同一个压缩包。
+发布页里有两个程序，请按自己的电脑情况**单独下载**。不要把它们再打进同一个压缩包。
 
-- **不想安装任何环境**：下载 `listening-audio-generator.exe`，双击即可。浏览器会打开页面。做好的试卷保存在这个 exe 旁边的 `data.json`。这份程序里带有完整音色表，发布前已逐个音色合成过一句，确认都能生成音频。
-- **想自己运行网页服务**：下载 `listening-audio-generator-web.zip`，解压后按下面的「最快的用法」操作。
+- **`listening-audio-generator.exe`（浏览器版）**  
+  图标是喇叭加一个小地球。双击后用系统自带的浏览器打开页面。适合 Windows 10 和 Windows 11。不需要 WebView2。电脑上要有一个浏览器。试卷保存在这个程序旁边的 `data.json`。
+- **`listening-audio-generator-webview.exe`（窗口版）**  
+  图标是喇叭加一个小窗口。界面和网页版完全一样，显示在自己的窗口里，不会另外弹出浏览器。导出整卷时会先让你选择保存位置。题目和设置也写在程序旁边的 `data.json`。  
+  适合 Windows 11，以及较新的 Windows 10（1803，2018 年 4 月更新及以后）。Windows 11 已自带所需组件。Windows 10 需要安装过 Microsoft Edge，或安装 [WebView2 运行库](https://developer.microsoft.com/microsoft-edge/webview2/)。Windows 7 和 Windows 8 不能用这个窗口版。
+
+两个程序的默认音色都是：男声 William、女声 Natasha、旁白晓晓。
 
 下载地址：<https://github.com/FocuZHe/listening-audio-generator/releases/latest>
+
+想自己改代码或在 Mac 上运行，再下载网页服务压缩包，按下面的「最快的用法」操作。
 
 ## 先装好这个
 
