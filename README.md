@@ -6,46 +6,32 @@
 
 适合中小学英语老师做单元卷、期中期末卷的听力部分。
 
+这是最初的正式版本。发布页上只有这一版，里面是两个分开的 Windows 程序。
+
 ## 下载
 
-发布页里有两个程序，请按自己的电脑情况**单独下载**。不要把它们再打进同一个压缩包。
-
-- **`listening-audio-generator.exe`（浏览器版）**  
-  图标是喇叭加一个小地球。双击后用系统自带的浏览器打开页面。适合 Windows 10 和 Windows 11。不需要 WebView2。电脑上要有一个浏览器。试卷保存在这个程序旁边的 `data.json`。
-- **`listening-audio-generator-webview.exe`（窗口版）**  
-  图标是喇叭加一个小窗口。界面和网页版完全一样，显示在自己的窗口里，不会另外弹出浏览器。导出整卷时会先让你选择保存位置。题目和设置也写在程序旁边的 `data.json`。  
-  适合 Windows 11，以及较新的 Windows 10（1803，2018 年 4 月更新及以后）。Windows 11 已自带所需组件。Windows 10 需要安装过 Microsoft Edge，或安装 [WebView2 运行库](https://developer.microsoft.com/microsoft-edge/webview2/)。Windows 7 和 Windows 8 不能用这个窗口版。
-
-两个程序的默认音色都是：男声 William、女声 Natasha、旁白晓晓。
+请按自己的电脑**单独下载其中一个**，不要把两个程序再打进同一个压缩包。
 
 下载地址：<https://github.com/FocuZHe/listening-audio-generator/releases/latest>
 
-想自己改代码或在 Mac 上运行，再下载网页服务压缩包，按下面的「最快的用法」操作。
+| 文件 | 图标 | 打开方式 | 适合的系统 |
+| --- | --- | --- | --- |
+| `listening-audio-generator.exe` | 喇叭加一个小地球 | 用系统浏览器打开页面 | Windows 10、Windows 11。电脑上要有浏览器。不需要 WebView2 |
+| `listening-audio-generator-webview.exe` | 喇叭加一个小窗口 | 在自己的窗口里显示，界面和网页版一样，不会另外弹出浏览器 | Windows 11，以及 Windows 10 1803（2018 年 4 月更新）及以后。Windows 7、Windows 8 不能用 |
 
-## 先装好这个
+窗口版在 Windows 11 上一般可以直接打开。Windows 10 需要已经安装 Microsoft Edge，或安装 [WebView2 运行库](https://developer.microsoft.com/microsoft-edge/webview2/)。如果缺这个组件，程序会提示下载地址。
 
-只需要 [Node.js 18](https://nodejs.org/) 或更高版本。安装时请勾选 **Add to PATH**。
-
-装好后，在命令行输入 `node -v`，能看到版本号就可以继续。
-
-## 最快的用法
-
-1. 下载或克隆这个文件夹，放到任意位置。整个文件夹都可以拷走，换一台装了 Node.js 的电脑也能用。
-2. Windows：双击 **`一键启动.bat`**。  
-   macOS / Linux：在这个文件夹里执行 `bash 一键启动.sh`。
-3. 第一次会自动安装依赖，需要联网，等它跑完。以后再打开就直接启动。
-4. 浏览器会自己打开 <http://localhost:3000> 。如果没有打开，就手动输入这个地址。
-5. 用完后关掉黑色命令行窗口，服务就停了。
-
-默认音色已经设好，一般不用改：
+两个程序的默认音色都是：
 
 - 男声：Microsoft WilliamMultilingual Online (Natural)
 - 女声：Microsoft Natasha Online (Natural) - English (Australia)
 - 旁白 / 中文：Microsoft Xiaoxiao Online (Natural) - Chinese (Mainland)
 
-## 页面上怎么出一套听力
+一般不用改。
 
-按这个顺序做即可。
+## 打开之后怎么用
+
+浏览器版和窗口版的页面是同一套。
 
 1. **选一份材料。** 左上角默认是「听力材料」。要另做一套卷子，点「新建听力材料」，起个名字，比如「五年级上册期中」。
 2. **加大题。** 点「立即新建大题」或「添加新听力大题部分」。点铅笔图标，填写大题标题和指导语，再点保存。不保存的话，播放时不会念这个标题。
@@ -53,85 +39,88 @@
    - 「增加单句题」：同一句先由男声读一遍，停一下，再由女声读一遍。
    - 「增加对话题」：按每句旁边的男声 / 女声读完一遍，停一下，再把整段对话读第二遍。
    - 题号前面的引导语默认是 `Number 1.`，可以改成别的，留空就不念。
-   - 单句和对话可以来回切换。切换时只保留你已经写的文字，不会自动塞进示例句子。空白台词会被跳过，不会读出来。
+   - 单句和对话可以来回切换。切换时只保留你已经写的文字，不会自动塞进示例句子。空白台词会被跳过。
 4. **写开场白和结束语。** 在「试卷听力广播语」里填写。结束语默认是「听力部分到此结束，请接着完成笔试部分。」留空就不会念。
 5. **试听。** 每道题左边的播放按钮只听这一题。上方「播放完整考试录音」会从开场白一直念到结束语。点左侧大纲只是跳到那一道大题，不会改成从中间开始播。
-6. **导出。** 点「导出整卷高清晰音频」。浏览器会下载一个 WAV，文件名就是当前材料的名字。这一步会逐句向微软请求语音，题目多时要等一会儿，不要关窗口。
+6. **导出。** 点「导出整卷高清晰音频」。窗口版会先让你选择保存位置；浏览器版会下载到浏览器的默认下载目录，文件名是当前材料的名字。题目多时要等一会儿，不要关掉程序。
 
-右侧可以调节：
+还可以调节：
 
 - **语速**：默认 0.9 倍。点「0.85x」会切到五年级常用速度。
 - **停顿**：男女声之间、对话句子之间、每题答完后的留白。可以直接输入小数，例如 `1.5`。
 - **叮咚**：每题开始前是否先响一声。
 
-## 做好的卷子存在哪里
+## 卷子保存在哪里
 
-题目主要保存在这台电脑的浏览器里，同时会在项目文件夹生成 `data.json` 作为备份。
+两个 exe 都会在**程序旁边**生成 `data.json`，题目、语速、停顿和音色都写在这个文件里。把 exe 拷到别的文件夹时，把旁边的 `data.json` 一起拷走，卷子才会跟着走。
 
-- 换浏览器，或清空了浏览器数据，可能看不到原来的卷子。`data.json` 还在的话，用同一个地址打开通常能再同步回来。
-- `data.json` 是你自己的试卷，不要发给别人，也不要上传到网上。
-- 朗读内容会发给微软的公开朗读服务，不要用来读敏感内容。
+窗口版还会在旁边生成 `webview-profile` 文件夹，那是窗口自己的页面数据，不要删。
 
-## 遇到问题
+`data.json` 是你自己的试卷，不要发给别人，也不要上传到网上。朗读内容会发给微软的公开朗读服务，不要用来读敏感内容。
 
-**双击后提示没有 Node.js**  
-去 <https://nodejs.org/> 安装 18 或更高版本，重开一次命令行，再双击 `一键启动.bat`。
+## 从源码运行
 
-**页面打不开**  
-看黑色窗口是否还开着。地址是 <http://localhost:3000> 。如果 3000 端口被占用，可以换一个端口后再启动：
+只有要改程序，或在 macOS、Linux 上使用时，才需要这一节。普通使用下载上面的 exe 即可。
 
-```bat
-set PORT=3080
-一键启动.bat
-```
+需要 [Node.js 18](https://nodejs.org/) 或更高版本。Windows 安装时勾选 **Add to PATH**。装好后在命令行输入 `node -v`，能看到版本号即可。
 
-PowerShell：
+1. 克隆或下载本仓库，放到任意位置。整个文件夹都可以拷走。
+2. Windows 双击 **`一键启动.bat`**。macOS / Linux 在这个文件夹里执行 `bash 一键启动.sh`。
+3. 第一次会自动安装依赖，需要联网。以后再打开就直接启动。
+4. 浏览器会打开 <http://localhost:3000> 。用完后关掉黑色命令行窗口，服务就停了。
 
-```powershell
-$env:PORT = "3080"
-.\一键启动.bat
-```
-
-macOS / Linux：`PORT=3080 bash 一键启动.sh`
-
-**能打开页面，但试听或导出失败**  
-先确认电脑能上网。微软有时会更新朗读接口，导致安装好的组件失效。在项目文件夹里执行：
-
-```bash
-npm run check:tts
-npm run patch:tts
-```
-
-第一条是检查，第二条会重新打补丁，并真的合成一句中文来确认。然后再双击启动。
-
-**导出很慢**  
-正常。每一句都要单独合成，再拼成一条音频。
-
-## 不想双击脚本时
-
-在项目文件夹里：
+也可以手动执行：
 
 ```bash
 npm install
 npm start
 ```
 
-然后打开 <http://localhost:3000> 。Windows、macOS、Linux 都是这两条命令。
+端口被占用时可以换一个。Windows 命令行：
+
+```bat
+set PORT=3080
+一键启动.bat
+```
+
+PowerShell：`$env:PORT = "3080"; .\一键启动.bat`  
+macOS / Linux：`PORT=3080 bash 一键启动.sh`
+
+从源码运行时，题目主要在浏览器里，同时会在项目文件夹生成 `data.json` 作为备份。换浏览器后如果看不到卷子，只要 `data.json` 还在，用同一个地址打开通常能再同步回来。
+
+## 遇到问题
+
+**窗口版打不开，提示缺少 WebView2**  
+这是 Windows 10 上缺组件。安装 Microsoft Edge，或到 <https://developer.microsoft.com/microsoft-edge/webview2/> 下载 Evergreen 运行库。Windows 7 和 Windows 8 请改用浏览器版；浏览器版也需要 Windows 10 或 Windows 11。
+
+**页面能开，但试听或导出失败**  
+先确认电脑能上网。导出慢是正常的，每一句都要单独向微软请求语音，再拼成一条音频。
+
+从源码运行时，如果微软更新了朗读接口，在项目文件夹里执行：
+
+```bash
+npm run check:tts
+npm run patch:tts
+```
+
+第一条是检查，第二条会重新打补丁，并真的合成一句中文来确认。然后再启动。
+
+**双击 `一键启动.bat` 后提示没有 Node.js**  
+去 <https://nodejs.org/> 安装 18 或更高版本，重新打开命令行，再双击一次。
 
 ## 文件夹里有什么
 
 ```
-一键启动.bat                 Windows 双击：安装依赖并启动
-一键启动.sh                  macOS / Linux：安装依赖并启动
-scripts/setup-and-run.cjs    上面两个脚本实际调用的程序
-scripts/start.cjs            只启动服务，不重复安装
+一键启动.bat                 Windows：安装依赖并启动网页
+一键启动.sh                  macOS / Linux：安装依赖并启动网页
 server.cjs                   网页和语音接口
 dist/                        已经打包好的页面
 voice_map.json               音色名称和 Edge 音色编号的对照表
-data.json                    运行后自动出现，保存你的试卷，不进仓库
+desktop-webview/             窗口版源码
+data.json                    运行后出现，保存你的试卷，不进仓库
 ```
 
-想增加音色时，在 `voice_map.json` 里加一行 `"页面上显示的名字": "xx-XX-XxxNeural"`，保存后重启服务。音色编号可以在微软的 [语音列表](https://learn.microsoft.com/azure/ai-services/speech-service/language-support) 里查。
+想增加音色时，在 `voice_map.json` 里加一行 `"页面上显示的名字": "xx-XX-XxxNeural"`，保存后重启。音色编号可以在微软的 [语音列表](https://learn.microsoft.com/azure/ai-services/speech-service/language-support) 里查。
 
 ## 放到学校服务器上
 
@@ -145,9 +134,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now listening-audio
 ```
 
-服务文件里已经写了生产模式和 3000 端口。前面再加一层网站反代时，用 `deploy/nginx.conf.example`。网站必须挂在域名根路径上，例如 `https://school.example.com/`，不要挂到 `/listening/` 这样的子目录，否则页面样式和脚本会找不到。
-
-反代超时建议放到 300 秒，因为导出整卷时单次请求可能比较久。
+前面再加一层网站反代时，用 `deploy/nginx.conf.example`。网站必须挂在域名根路径上，例如 `https://school.example.com/`，不要挂到 `/listening/` 这样的子目录，否则页面样式和脚本会找不到。反代超时建议放到 300 秒。
 
 ## 给开发者的接口
 
@@ -161,9 +148,7 @@ sudo systemctl enable --now listening-audio
 
 `role` 用 `male`、`female` 或 `narrator`。`speed` 是倍数，例如 `0.9`。`voiceName` 用 `voice_map.json` 里的显示名。
 
-页面文件在 `dist/` 里，是打包结果，这个仓库没有前端源码。`server.cjs` 可以直接改。
-
-旧的配置里可能还有一项叫 `gemini` 的引擎。现在没有这个接口，试听和导出都走 Edge，不需要填写 API Key。
+页面文件在 `dist/` 里，是打包结果，这个仓库没有前端源码。`server.cjs` 可以直接改。试听和导出都走 Edge，不需要 API Key。
 
 ## 许可
 
